@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +13,8 @@ const Dashboard = () => {
     proposalsPitched: 18,
     closingRate: 15.8,
     totalCashCollected: 145000,
-    avgRevenuePerClient: 12083
+    avgRevenuePerClient: 12083,
+    avgDealSize: 9650
   };
 
   const showUpRates = {
@@ -98,6 +98,12 @@ const Dashboard = () => {
             value={`$${(metrics.totalCashCollected / 1000).toFixed(0)}K`}
             icon={DollarSign}
             trend={15.8}
+          />
+          <MetricCard
+            title="Average Deal Size"
+            value={`$${(metrics.avgDealSize / 1000).toFixed(1)}K`}
+            icon={DollarSign}
+            trend={8.5}
           />
         </div>
       </div>
