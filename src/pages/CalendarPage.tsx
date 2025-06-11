@@ -1,17 +1,17 @@
 
 import React from 'react';
 import Navigation from '@/components/Navigation';
-import Dashboard from '@/components/Dashboard';
+import CalendarView from '@/components/CalendarView';
 
-const Index = () => {
+const CalendarPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="max-w-7xl mx-auto p-6">
-        <Dashboard />
+        <CalendarView />
       </main>
     </div>
   );
 };
 
-export default Index;
+export default CalendarPage;

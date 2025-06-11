@@ -1,17 +1,17 @@
 
 import React from 'react';
 import Navigation from '@/components/Navigation';
-import Dashboard from '@/components/Dashboard';
+import ClientInput from '@/components/ClientInput';
 
-const Index = () => {
+const ClientsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="max-w-7xl mx-auto p-6">
-        <Dashboard />
+        <ClientInput />
       </main>
     </div>
   );
 };
 
-export default Index;
+export default ClientsPage;
