@@ -65,33 +65,23 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Sales Dashboard</h1>
-        <p className="text-muted-foreground">Track your sales performance and KPIs</p>
+      <div className="flex items-center gap-4">
+        <img src="/logo.png" alt="Logo" className="h-12 w-12" />
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Sales Dashboard</h1>
+          <p className="text-muted-foreground">Track your sales performance and KPIs</p>
+        </div>
       </div>
 
       {/* Key Metrics */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Key Performance Indicators</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <MetricCard
-            title="Total Calls"
-            value={metrics.totalCalls}
-            icon={Phone}
+            title="Revenue"
+            value={`$${(metrics.avgRevenuePerClient * metrics.proposalsPitched).toLocaleString()}`}
+            icon={DollarSign}
             trend={12.5}
-          />
-          <MetricCard
-            title="Discovery Calls"
-            value={metrics.discoveryCallsTotal}
-            icon={Users}
-            trend={8.2}
-          />
-          <MetricCard
-            title="Closing Rate"
-            value={metrics.closingRate}
-            unit="%"
-            icon={Target}
-            trend={3.1}
           />
           <MetricCard
             title="Cash Collected"
@@ -104,6 +94,25 @@ const Dashboard = () => {
             value={`$${(metrics.avgDealSize / 1000).toFixed(1)}K`}
             icon={DollarSign}
             trend={8.5}
+          />
+          <MetricCard
+            title="Closing Rate"
+            value={metrics.closingRate}
+            unit="%"
+            icon={Target}
+            trend={3.1}
+          />
+          <MetricCard
+            title="Total Calls"
+            value={metrics.totalCalls}
+            icon={Phone}
+            trend={12.5}
+          />
+          <MetricCard
+            title="Total Proposals Created"
+            value={metrics.proposalsCreated}
+            icon={Users}
+            trend={8.2}
           />
         </div>
       </div>
