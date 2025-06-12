@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface Contact {
@@ -196,7 +195,18 @@ export const SalesDataProvider = ({ children }: { children: ReactNode }) => {
       opp.proposalStatus === 'pitched'
     ).length;
 
-    const overallShowUpRate = totalCalls > 0 ? 85.5 : 0; // Mock calculation
+    // Calculate show-up rates based on duration data
+    const discovery1ShowUps = opportunities.filter(opp => opp.discovery1Duration && opp.discovery1Duration > 0).length;
+    const discovery2ShowUps = opportunities.filter(opp => opp.discovery2Duration && opp.discovery2Duration > 0).length;
+    const discovery3ShowUps = opportunities.filter(opp => opp.discovery3Duration && opp.discovery3Duration > 0).length;
+    const closing1ShowUps = opportunities.filter(opp => opp.closing1Duration && opp.closing1Duration > 0).length;
+    const closing2ShowUps = opportunities.filter(opp => opp.closing2Duration && opp.closing2Duration > 0).length;
+    const closing3ShowUps = opportunities.filter(opp => opp.closing3Duration && opp.closing3Duration > 0).length;
+
+    const totalShowUps = discovery1ShowUps + discovery2ShowUps + discovery3ShowUps + 
+                        closing1ShowUps + closing2ShowUps + closing3ShowUps;
+
+    const overallShowUpRate = totalCalls > 0 ? (totalShowUps / totalCalls) * 100 : 0;
 
     return {
       totalCalls,
@@ -216,7 +226,14 @@ export const SalesDataProvider = ({ children }: { children: ReactNode }) => {
       avgClosing2Duration: Math.round(avgClosing2Duration),
       avgClosing3Duration: Math.round(avgClosing3Duration),
       proposalsCreated,
-      proposalsPitched
+      proposalsPitched,
+      // Add individual show-up rates
+      discovery1ShowUpRate: discovery1Calls > 0 ? (discovery1ShowUps / discovery1Calls) * 100 : 0,
+      discovery2ShowUpRate: discovery2Calls > 0 ? (discovery2ShowUps / discovery2Calls) * 100 : 0,
+      discovery3ShowUpRate: discovery3Calls > 0 ? (discovery3ShowUps / discovery3Calls) * 100 : 0,
+      closing1ShowUpRate: closing1Calls > 0 ? (closing1ShowUps / closing1Calls) * 100 : 0,
+      closing2ShowUpRate: closing2Calls > 0 ? (closing2ShowUps / closing2Calls) * 100 : 0,
+      closing3ShowUpRate: closing3Calls > 0 ? (closing3ShowUps / closing3Calls) * 100 : 0
     };
   };
 

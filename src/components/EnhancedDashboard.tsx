@@ -204,6 +204,55 @@ const EnhancedDashboard = () => {
         />
       </div>
 
+      {/* Show-Up Rates Section */}
+      <div>
+        <h3 className="text-2xl font-bold mb-4 text-gray-900">Show-Up Rates</h3>
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+          <SmallMetricCard
+            title="Discovery 1 Show-Up"
+            value={metrics.discovery1ShowUpRate}
+            unit="%"
+            icon={Target}
+            className="bg-blue-50 rounded-xl shadow border-0"
+          />
+          <SmallMetricCard
+            title="Discovery 2 Show-Up"
+            value={metrics.discovery2ShowUpRate}
+            unit="%"
+            icon={Target}
+            className="bg-blue-50 rounded-xl shadow border-0"
+          />
+          <SmallMetricCard
+            title="Discovery 3 Show-Up"
+            value={metrics.discovery3ShowUpRate}
+            unit="%"
+            icon={Target}
+            className="bg-blue-50 rounded-xl shadow border-0"
+          />
+          <SmallMetricCard
+            title="Closing 1 Show-Up"
+            value={metrics.closing1ShowUpRate}
+            unit="%"
+            icon={Target}
+            className="bg-green-50 rounded-xl shadow border-0"
+          />
+          <SmallMetricCard
+            title="Closing 2 Show-Up"
+            value={metrics.closing2ShowUpRate}
+            unit="%"
+            icon={Target}
+            className="bg-green-50 rounded-xl shadow border-0"
+          />
+          <SmallMetricCard
+            title="Closing 3 Show-Up"
+            value={metrics.closing3ShowUpRate}
+            unit="%"
+            icon={Target}
+            className="bg-green-50 rounded-xl shadow border-0"
+          />
+        </div>
+      </div>
+
       {/* Trend Analysis Chart */}
       <Card className="bg-white rounded-xl shadow-lg p-2 md:p-6 border-0">
         <CardHeader>
