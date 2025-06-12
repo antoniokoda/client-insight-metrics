@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { BarChart3, Users, Calendar, Settings, User } from 'lucide-react';
+import { BarChart3, Users, Calendar, Settings, User, Target } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
@@ -14,10 +15,10 @@ const Navigation = () => {
       current: location.pathname === '/'
     },
     {
-      name: 'Client Data',
-      href: '/clients',
-      icon: Users,
-      current: location.pathname === '/clients'
+      name: 'Opportunities',
+      href: '/opportunities',
+      icon: Target,
+      current: location.pathname === '/opportunities'
     },
     {
       name: 'Calendar',
