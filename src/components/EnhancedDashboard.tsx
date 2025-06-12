@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -88,6 +89,20 @@ const EnhancedDashboard = () => {
     </Card>
   );
 
+  const SmallMetricCard = ({ title, value, unit = '', icon: Icon, className = '' }: any) => (
+    <Card className={`transition-all hover:shadow-lg ${className}`}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+        <CardTitle className="text-xs font-medium text-muted-foreground">{title}</CardTitle>
+        <Icon className="h-3 w-3 text-muted-foreground" />
+      </CardHeader>
+      <CardContent className="pb-2">
+        <div className="text-lg font-bold">
+          {typeof value === 'number' ? value.toLocaleString() : value}{unit}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   const metricOptions = [
     { id: 'cashCollected', label: 'Cash Collected', color: '#8884d8' },
     { id: 'revenue', label: 'Revenue', color: '#82ca9d' },
@@ -146,8 +161,8 @@ const EnhancedDashboard = () => {
         </Select>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      {/* Main Key Metrics - 6 cards in a row */}
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
         <MetricCard
           title="Total Calls"
           value={metrics.totalCalls}
@@ -179,101 +194,11 @@ const EnhancedDashboard = () => {
           icon={FileText}
           trend={10.2}
         />
-      </div>
-
-      {/* Additional Key Metrics */}
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1">
         <MetricCard
           title="Proposals Pitched"
           value={metrics.proposalsPitched}
           icon={FileText}
           trend={7.8}
-        />
-      </div>
-
-      {/* Call Type Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <MetricCard
-          title="Discovery 1 Calls"
-          value={metrics.discovery1Calls}
-          icon={Phone}
-          className="bg-blue-50"
-        />
-        <MetricCard
-          title="Discovery 2 Calls"
-          value={metrics.discovery2Calls}
-          icon={Phone}
-          className="bg-blue-50"
-        />
-        <MetricCard
-          title="Discovery 3 Calls"
-          value={metrics.discovery3Calls}
-          icon={Phone}
-          className="bg-blue-50"
-        />
-        <MetricCard
-          title="Closing 1 Calls"
-          value={metrics.closing1Calls}
-          icon={Phone}
-          className="bg-green-50"
-        />
-        <MetricCard
-          title="Closing 2 Calls"
-          value={metrics.closing2Calls}
-          icon={Phone}
-          className="bg-green-50"
-        />
-        <MetricCard
-          title="Closing 3 Calls"
-          value={metrics.closing3Calls}
-          icon={Phone}
-          className="bg-green-50"
-        />
-      </div>
-
-      {/* Average Call Duration Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <MetricCard
-          title="Avg Discovery 1 Duration"
-          value={metrics.avgDiscovery1Duration}
-          unit=" min"
-          icon={Clock}
-          className="bg-purple-50"
-        />
-        <MetricCard
-          title="Avg Discovery 2 Duration"
-          value={metrics.avgDiscovery2Duration}
-          unit=" min"
-          icon={Clock}
-          className="bg-purple-50"
-        />
-        <MetricCard
-          title="Avg Discovery 3 Duration"
-          value={metrics.avgDiscovery3Duration}
-          unit=" min"
-          icon={Clock}
-          className="bg-purple-50"
-        />
-        <MetricCard
-          title="Avg Closing 1 Duration"
-          value={metrics.avgClosing1Duration}
-          unit=" min"
-          icon={Clock}
-          className="bg-orange-50"
-        />
-        <MetricCard
-          title="Avg Closing 2 Duration"
-          value={metrics.avgClosing2Duration}
-          unit=" min"
-          icon={Clock}
-          className="bg-orange-50"
-        />
-        <MetricCard
-          title="Avg Closing 3 Duration"
-          value={metrics.avgClosing3Duration}
-          unit=" min"
-          icon={Clock}
-          className="bg-orange-50"
         />
       </div>
 
@@ -396,6 +321,95 @@ const EnhancedDashboard = () => {
             </ResponsiveContainer>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Call Type Metrics - Smaller cards at the bottom */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4 text-muted-foreground">Call Details</h3>
+        <div className="grid gap-3 md:grid-cols-4 lg:grid-cols-6">
+          <SmallMetricCard
+            title="Discovery 1 Calls"
+            value={metrics.discovery1Calls}
+            icon={Phone}
+            className="bg-blue-50"
+          />
+          <SmallMetricCard
+            title="Discovery 2 Calls"
+            value={metrics.discovery2Calls}
+            icon={Phone}
+            className="bg-blue-50"
+          />
+          <SmallMetricCard
+            title="Discovery 3 Calls"
+            value={metrics.discovery3Calls}
+            icon={Phone}
+            className="bg-blue-50"
+          />
+          <SmallMetricCard
+            title="Closing 1 Calls"
+            value={metrics.closing1Calls}
+            icon={Phone}
+            className="bg-green-50"
+          />
+          <SmallMetricCard
+            title="Closing 2 Calls"
+            value={metrics.closing2Calls}
+            icon={Phone}
+            className="bg-green-50"
+          />
+          <SmallMetricCard
+            title="Closing 3 Calls"
+            value={metrics.closing3Calls}
+            icon={Phone}
+            className="bg-green-50"
+          />
+        </div>
+      </div>
+
+      {/* Average Call Duration Metrics - Smaller cards at the bottom */}
+      <div className="grid gap-3 md:grid-cols-4 lg:grid-cols-6">
+        <SmallMetricCard
+          title="Avg Discovery 1 Duration"
+          value={metrics.avgDiscovery1Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-purple-50"
+        />
+        <SmallMetricCard
+          title="Avg Discovery 2 Duration"
+          value={metrics.avgDiscovery2Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-purple-50"
+        />
+        <SmallMetricCard
+          title="Avg Discovery 3 Duration"
+          value={metrics.avgDiscovery3Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-purple-50"
+        />
+        <SmallMetricCard
+          title="Avg Closing 1 Duration"
+          value={metrics.avgClosing1Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-orange-50"
+        />
+        <SmallMetricCard
+          title="Avg Closing 2 Duration"
+          value={metrics.avgClosing2Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-orange-50"
+        />
+        <SmallMetricCard
+          title="Avg Closing 3 Duration"
+          value={metrics.avgClosing3Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-orange-50"
+        />
       </div>
     </div>
   );
