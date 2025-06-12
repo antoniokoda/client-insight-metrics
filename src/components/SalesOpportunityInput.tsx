@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -198,15 +197,15 @@ const SalesOpportunityInput = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10 px-2 md:px-6 py-8 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="mb-2 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sales Opportunities Management</h1>
-          <p className="text-muted-foreground">Track sales opportunities, contacts, and call details</p>
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Sales Opportunities Management</h1>
+          <p className="text-lg text-gray-500 mt-1">Track sales opportunities, contacts, and call details</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => setShowAddForm(true)} className="flex items-center gap-2">
+          <Button onClick={() => setShowAddForm(true)} className="flex items-center gap-2 shadow-md hover:shadow-lg transition-shadow duration-200">
             <Plus className="h-4 w-4" />
             Add Opportunity
           </Button>
@@ -214,28 +213,30 @@ const SalesOpportunityInput = () => {
       </div>
 
       {/* Management Sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-200 border-0">
           <CardHeader>
-            <CardTitle>Salespersons</CardTitle>
+            <CardTitle className="text-xl font-bold text-gray-900">Salespersons</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {salespersons.map(person => (
-                <div key={person.id} className="flex justify-between items-center">
-                  <span>{person.name}</span>
+                <div key={person.id} className="flex justify-between items-center p-2 rounded-lg hover:bg-gray-50">
+                  <span className="font-medium text-gray-800">{person.name}</span>
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="hover:bg-red-50"
                     onClick={() => setSalespersons(salespersons.filter(p => p.id !== person.id))}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4 text-red-500" />
                   </Button>
                 </div>
               ))}
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-2">
                 <Input placeholder="New salesperson name" id="new-salesperson" />
                 <Button 
+                  className="shadow"
                   onClick={() => {
                     const input = document.getElementById('new-salesperson') as HTMLInputElement;
                     if (input.value.trim()) {
@@ -251,27 +252,29 @@ const SalesOpportunityInput = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-200 border-0">
           <CardHeader>
-            <CardTitle>Lead Sources</CardTitle>
+            <CardTitle className="text-xl font-bold text-gray-900">Lead Sources</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {leadSources.map(source => (
-                <div key={source.id} className="flex justify-between items-center">
-                  <span>{source.name}</span>
+                <div key={source.id} className="flex justify-between items-center p-2 rounded-lg hover:bg-gray-50">
+                  <span className="font-medium text-gray-800">{source.name}</span>
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="hover:bg-red-50"
                     onClick={() => setLeadSources(leadSources.filter(s => s.id !== source.id))}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4 text-red-500" />
                   </Button>
                 </div>
               ))}
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-2">
                 <Input placeholder="New lead source" id="new-lead-source" />
                 <Button 
+                  className="shadow"
                   onClick={() => {
                     const input = document.getElementById('new-lead-source') as HTMLInputElement;
                     if (input.value.trim()) {
@@ -289,9 +292,9 @@ const SalesOpportunityInput = () => {
       </div>
 
       {/* Opportunities List */}
-      <div className="space-y-4">
+      <div className="space-y-8">
         {opportunities.map((opportunity) => (
-          <Card key={opportunity.id}>
+          <Card key={opportunity.id} className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-200 border-0">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -304,15 +307,27 @@ const SalesOpportunityInput = () => {
                           : opp
                       ));
                     }}
-                    className="text-lg font-semibold border-none p-0 focus-visible:ring-0"
+                    className="text-lg font-semibold border-none p-0 focus-visible:ring-0 bg-transparent"
                   />
-                  <div className="flex gap-2 mt-2">
-                    <Badge variant="outline">{opportunity.salesperson}</Badge>
-                    <Badge variant="secondary">{opportunity.leadSource}</Badge>
-                    <Badge variant={opportunity.opportunityStatus === 'won' ? 'default' : opportunity.opportunityStatus === 'lost' ? 'destructive' : 'secondary'}>
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-200">{opportunity.salesperson}</Badge>
+                    <Badge variant="secondary" className="bg-purple-50 text-purple-800 border-purple-200">{opportunity.leadSource}</Badge>
+                    <Badge variant={opportunity.opportunityStatus === 'won' ? 'default' : opportunity.opportunityStatus === 'lost' ? 'destructive' : 'secondary'}
+                      className={
+                        opportunity.opportunityStatus === 'won' ? 'bg-green-100 text-green-800' :
+                        opportunity.opportunityStatus === 'lost' ? 'bg-red-100 text-red-800' :
+                        'bg-yellow-50 text-yellow-800'
+                      }
+                    >
                       {opportunity.opportunityStatus}
                     </Badge>
-                    <Badge variant={opportunity.proposalStatus === 'pitched' ? 'default' : opportunity.proposalStatus === 'created' ? 'secondary' : 'outline'}>
+                    <Badge variant={opportunity.proposalStatus === 'pitched' ? 'default' : opportunity.proposalStatus === 'created' ? 'secondary' : 'outline'}
+                      className={
+                        opportunity.proposalStatus === 'pitched' ? 'bg-green-50 text-green-800' :
+                        opportunity.proposalStatus === 'created' ? 'bg-yellow-50 text-yellow-800' :
+                        'bg-gray-50 text-gray-800'
+                      }
+                    >
                       Proposal: {opportunity.proposalStatus}
                     </Badge>
                   </div>
@@ -320,17 +335,17 @@ const SalesOpportunityInput = () => {
                 <div className="flex gap-2">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <Users className="h-4 w-4" />
+                      <Button variant="ghost" size="sm" className="hover:bg-blue-50 rounded-full">
+                        <Users className="h-4 w-4 text-blue-500" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-4xl">
+                    <DialogContent className="max-w-4xl rounded-xl p-6">
                       <DialogHeader>
-                        <DialogTitle>Contacts for {opportunity.name}</DialogTitle>
+                        <DialogTitle className="text-xl font-bold text-gray-900">Contacts for {opportunity.name}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         {opportunity.contacts.map((contact) => (
-                          <div key={contact.id} className="grid grid-cols-5 gap-4 p-4 border rounded">
+                          <div key={contact.id} className="grid grid-cols-5 gap-4 p-4 border rounded-lg bg-gray-50">
                             <Input
                               placeholder="Name"
                               value={contact.name}
@@ -358,7 +373,7 @@ const SalesOpportunityInput = () => {
                             />
                           </div>
                         ))}
-                        <Button onClick={() => addContact(opportunity.id)}>
+                        <Button onClick={() => addContact(opportunity.id)} className="shadow">
                           <Plus className="h-4 w-4 mr-2" />
                           Add Contact
                         </Button>
@@ -368,18 +383,18 @@ const SalesOpportunityInput = () => {
                   
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <FileText className="h-4 w-4" />
+                      <Button variant="ghost" size="sm" className="hover:bg-purple-50 rounded-full">
+                        <FileText className="h-4 w-4 text-purple-500" />
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="rounded-xl p-6">
                       <DialogHeader>
-                        <DialogTitle>Notes for {opportunity.name}</DialogTitle>
+                        <DialogTitle className="text-xl font-bold text-gray-900">Notes for {opportunity.name}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4 max-h-96 overflow-y-auto">
                         {opportunity.notes.map((note) => (
-                          <div key={note.id} className="p-3 border rounded">
-                            <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                          <div key={note.id} className="p-3 border rounded-lg bg-gray-50">
+                            <div className="flex justify-between text-sm text-gray-500 mb-2">
                               <span>{note.author}</span>
                               <span>{format(note.timestamp, 'MMM dd, yyyy HH:mm')}</span>
                             </div>
@@ -387,13 +402,14 @@ const SalesOpportunityInput = () => {
                           </div>
                         ))}
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 mt-2">
                         <Textarea
                           placeholder="Add a note..."
                           value={newNote}
                           onChange={(e) => setNewNote(e.target.value)}
+                          className="rounded-lg"
                         />
-                        <Button onClick={() => addNote(opportunity.id)}>Add</Button>
+                        <Button onClick={() => addNote(opportunity.id)} className="shadow">Add</Button>
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -401,18 +417,19 @@ const SalesOpportunityInput = () => {
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="hover:bg-red-50 rounded-full"
                     onClick={() => deleteOpportunity(opportunity.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 text-red-500" />
                   </Button>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               {/* Main Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
                 <div>
-                  <Label>Salesperson</Label>
+                  <Label className="font-semibold text-gray-700 mb-1 block">Salesperson</Label>
                   <Select
                     value={opportunity.salesperson}
                     onValueChange={(value) => {
@@ -423,10 +440,10 @@ const SalesOpportunityInput = () => {
                       ));
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-lg">
                       {salespersons.map(person => (
                         <SelectItem key={person.id} value={person.name}>{person.name}</SelectItem>
                       ))}
@@ -434,7 +451,7 @@ const SalesOpportunityInput = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label>Lead Source</Label>
+                  <Label className="font-semibold text-gray-700 mb-1 block">Lead Source</Label>
                   <Select
                     value={opportunity.leadSource}
                     onValueChange={(value) => {
@@ -445,10 +462,10 @@ const SalesOpportunityInput = () => {
                       ));
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-lg">
                       {leadSources.map(source => (
                         <SelectItem key={source.id} value={source.name}>{source.name}</SelectItem>
                       ))}
@@ -456,7 +473,7 @@ const SalesOpportunityInput = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label>Opportunity Status</Label>
+                  <Label className="font-semibold text-gray-700 mb-1 block">Opportunity Status</Label>
                   <Select
                     value={opportunity.opportunityStatus}
                     onValueChange={(value: 'active' | 'won' | 'lost') => {
@@ -467,10 +484,10 @@ const SalesOpportunityInput = () => {
                       ));
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-lg">
                       <SelectItem value="active">Active</SelectItem>
                       <SelectItem value="won">Won</SelectItem>
                       <SelectItem value="lost">Lost</SelectItem>
@@ -478,7 +495,7 @@ const SalesOpportunityInput = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label>Proposal Status</Label>
+                  <Label className="font-semibold text-gray-700 mb-1 block">Proposal Status</Label>
                   <Select
                     value={opportunity.proposalStatus}
                     onValueChange={(value: 'not-created' | 'created' | 'pitched') => {
@@ -489,10 +506,10 @@ const SalesOpportunityInput = () => {
                       ));
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-lg">
                       <SelectItem value="not-created">Not Created</SelectItem>
                       <SelectItem value="created">Created</SelectItem>
                       <SelectItem value="pitched">Pitched</SelectItem>
@@ -501,9 +518,9 @@ const SalesOpportunityInput = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <Label>Revenue ($)</Label>
+                  <Label className="font-semibold text-gray-700 mb-1 block">Revenue ($)</Label>
                   <Input
                     type="number"
                     value={opportunity.revenue}
@@ -515,10 +532,11 @@ const SalesOpportunityInput = () => {
                       ));
                     }}
                     placeholder="0"
+                    className="rounded-lg"
                   />
                 </div>
                 <div>
-                  <Label>Cash Collected ($)</Label>
+                  <Label className="font-semibold text-gray-700 mb-1 block">Cash Collected ($)</Label>
                   <Input
                     type="number"
                     value={opportunity.cashCollected}
@@ -530,21 +548,22 @@ const SalesOpportunityInput = () => {
                       ));
                     }}
                     placeholder="0"
+                    className="rounded-lg"
                   />
                 </div>
               </div>
 
               {/* Call Details - Compact Version */}
               <div className="space-y-4">
-                <h4 className="font-semibold text-sm">Call Details</h4>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <h4 className="font-semibold text-lg text-gray-900">Call Details</h4>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Discovery Calls */}
                   <div>
-                    <h5 className="text-xs font-medium mb-2">Discovery Calls</h5>
+                    <h5 className="text-md font-semibold mb-2 text-blue-700">Discovery Calls</h5>
                     <div className="space-y-2">
                       {[1, 2, 3].map((num) => (
-                        <div key={num} className="grid grid-cols-5 gap-1 items-center text-xs">
-                          <span className="text-xs">D{num}:</span>
+                        <div key={num} className="grid grid-cols-5 gap-2 items-center text-sm">
+                          <span className="font-semibold text-blue-700">D{num}:</span>
                           <DatePicker
                             date={opportunity[`discovery${num}Date` as keyof SalesOpportunity] as Date}
                             onSelect={(date) => {
@@ -559,7 +578,7 @@ const SalesOpportunityInput = () => {
                           <Input
                             type="number"
                             placeholder="min"
-                            className="text-xs h-8"
+                            className="text-sm h-9 rounded-lg"
                             value={opportunity[`discovery${num}Duration` as keyof SalesOpportunity] as number || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
@@ -571,7 +590,7 @@ const SalesOpportunityInput = () => {
                           />
                           <Input
                             placeholder="Link"
-                            className="text-xs h-8 col-span-2"
+                            className="text-sm h-9 col-span-2 rounded-lg"
                             value={opportunity[`discovery${num}Link` as keyof SalesOpportunity] as string || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
@@ -588,11 +607,11 @@ const SalesOpportunityInput = () => {
 
                   {/* Closing Calls */}
                   <div>
-                    <h5 className="text-xs font-medium mb-2">Closing Calls</h5>
+                    <h5 className="text-md font-semibold mb-2 text-green-700">Closing Calls</h5>
                     <div className="space-y-2">
                       {[1, 2, 3].map((num) => (
-                        <div key={num} className="grid grid-cols-5 gap-1 items-center text-xs">
-                          <span className="text-xs">C{num}:</span>
+                        <div key={num} className="grid grid-cols-5 gap-2 items-center text-sm">
+                          <span className="font-semibold text-green-700">C{num}:</span>
                           <DatePicker
                             date={opportunity[`closing${num}Date` as keyof SalesOpportunity] as Date}
                             onSelect={(date) => {
@@ -607,7 +626,7 @@ const SalesOpportunityInput = () => {
                           <Input
                             type="number"
                             placeholder="min"
-                            className="text-xs h-8"
+                            className="text-sm h-9 rounded-lg"
                             value={opportunity[`closing${num}Duration` as keyof SalesOpportunity] as number || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
@@ -619,7 +638,7 @@ const SalesOpportunityInput = () => {
                           />
                           <Input
                             placeholder="Link"
-                            className="text-xs h-8 col-span-2"
+                            className="text-sm h-9 col-span-2 rounded-lg"
                             value={opportunity[`closing${num}Link` as keyof SalesOpportunity] as string || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
