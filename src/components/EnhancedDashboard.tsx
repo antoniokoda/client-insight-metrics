@@ -11,6 +11,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 const EnhancedDashboard = () => {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>('all');
   const [selectedLeadSource, setSelectedLeadSource] = useState<string>('all');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(['cashCollected', 'revenue', 'totalCalls']);
 
   // Mock data - in real app this would come from API
@@ -35,33 +36,25 @@ const EnhancedDashboard = () => {
     { name: 'Cold Outreach', value: 25, color: '#ffc658' }
   ];
 
-  const callDurationData = [
-    { type: 'Discovery 1', avgDuration: 42 },
-    { type: 'Discovery 2', avgDuration: 38 },
-    { type: 'Discovery 3', avgDuration: 35 },
-    { type: 'Closing 1', avgDuration: 52 },
-    { type: 'Closing 2', avgDuration: 48 },
-    { type: 'Closing 3', avgDuration: 45 }
-  ];
-
-  const funnelData = [
-    { stage: 'Leads', count: 1000, color: '#8884d8' },
-    { stage: 'Discovery 1', count: 650, color: '#82ca9d' },
-    { stage: 'Discovery 2', count: 420, color: '#ffc658' },
-    { stage: 'Discovery 3', count: 280, color: '#ff7300' },
-    { stage: 'Closing 1', count: 180, color: '#00ff00' },
-    { stage: 'Closing 2', count: 120, color: '#ff0000' },
-    { stage: 'Closing 3', count: 80, color: '#0088fe' },
-    { stage: 'Won', count: 58, color: '#00C49F' }
-  ];
-
   const metrics = {
     totalCalls: 255,
     overallShowUpRate: 87.3,
     totalRevenue: 195000,
     totalCashCollected: 145000,
     avgDiscoveryDuration: 38.5,
-    avgClosingDuration: 48.3
+    avgClosingDuration: 48.3,
+    discovery1Calls: 45,
+    discovery2Calls: 38,
+    discovery3Calls: 32,
+    closing1Calls: 28,
+    closing2Calls: 22,
+    closing3Calls: 18,
+    avgDiscovery1Duration: 42,
+    avgDiscovery2Duration: 38,
+    avgDiscovery3Duration: 35,
+    avgClosing1Duration: 52,
+    avgClosing2Duration: 48,
+    avgClosing3Duration: 45
   };
 
   const MetricCard = ({ title, value, unit = '', icon: Icon, trend, className = '' }: any) => (
@@ -91,6 +84,8 @@ const EnhancedDashboard = () => {
     { id: 'leadsReferral', label: 'Referral Leads', color: '#00ff00' },
     { id: 'leadsColdOutreach', label: 'Cold Outreach Leads', color: '#ff0000' }
   ];
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
   return (
     <div className="space-y-6">
@@ -125,6 +120,18 @@ const EnhancedDashboard = () => {
             <SelectItem value="cold">Cold Outreach</SelectItem>
           </SelectContent>
         </Select>
+
+        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Select Month" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Months</SelectItem>
+            {months.map((month) => (
+              <SelectItem key={month} value={month.toLowerCase()}>{month}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Key Metrics */}
@@ -153,6 +160,92 @@ const EnhancedDashboard = () => {
           value={`$${(metrics.totalCashCollected / 1000).toFixed(0)}K`}
           icon={DollarSign}
           trend={8.5}
+        />
+      </div>
+
+      {/* Call Type Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <MetricCard
+          title="Discovery 1 Calls"
+          value={metrics.discovery1Calls}
+          icon={Phone}
+          className="bg-blue-50"
+        />
+        <MetricCard
+          title="Discovery 2 Calls"
+          value={metrics.discovery2Calls}
+          icon={Phone}
+          className="bg-blue-50"
+        />
+        <MetricCard
+          title="Discovery 3 Calls"
+          value={metrics.discovery3Calls}
+          icon={Phone}
+          className="bg-blue-50"
+        />
+        <MetricCard
+          title="Closing 1 Calls"
+          value={metrics.closing1Calls}
+          icon={Phone}
+          className="bg-green-50"
+        />
+        <MetricCard
+          title="Closing 2 Calls"
+          value={metrics.closing2Calls}
+          icon={Phone}
+          className="bg-green-50"
+        />
+        <MetricCard
+          title="Closing 3 Calls"
+          value={metrics.closing3Calls}
+          icon={Phone}
+          className="bg-green-50"
+        />
+      </div>
+
+      {/* Average Call Duration Metrics */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <MetricCard
+          title="Avg Discovery 1 Duration"
+          value={metrics.avgDiscovery1Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-purple-50"
+        />
+        <MetricCard
+          title="Avg Discovery 2 Duration"
+          value={metrics.avgDiscovery2Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-purple-50"
+        />
+        <MetricCard
+          title="Avg Discovery 3 Duration"
+          value={metrics.avgDiscovery3Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-purple-50"
+        />
+        <MetricCard
+          title="Avg Closing 1 Duration"
+          value={metrics.avgClosing1Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-orange-50"
+        />
+        <MetricCard
+          title="Avg Closing 2 Duration"
+          value={metrics.avgClosing2Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-orange-50"
+        />
+        <MetricCard
+          title="Avg Closing 3 Duration"
+          value={metrics.avgClosing3Duration}
+          unit=" min"
+          icon={Clock}
+          className="bg-orange-50"
         />
       </div>
 
@@ -272,48 +365,6 @@ const EnhancedDashboard = () => {
                 </Pie>
                 <Tooltip />
               </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Call Duration Metrics */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Average Call Durations
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={callDurationData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="type" angle={-45} textAnchor="end" height={80} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="avgDuration" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Sales Funnel Flow */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Sales Funnel Flow
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={funnelData} layout="horizontal">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="stage" type="category" width={80} />
-                <Tooltip />
-                <Bar dataKey="count" fill="#8884d8" />
-              </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
