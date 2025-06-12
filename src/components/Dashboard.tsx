@@ -65,12 +65,9 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <img src="/logo.png" alt="Logo" className="h-12 w-12" />
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Sales Dashboard</h1>
-          <p className="text-muted-foreground">Track your sales performance and KPIs</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Sales Dashboard</h1>
+        <p className="text-muted-foreground">Track your sales performance and KPIs</p>
       </div>
 
       {/* Key Metrics */}
