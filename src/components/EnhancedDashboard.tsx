@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { TrendingUp, Users, Phone, DollarSign, Target, Clock, BarChart3 } from 'lucide-react';
+import { TrendingUp, Users, Phone, DollarSign, Target, Clock, BarChart3, FileText } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 
 const EnhancedDashboard = () => {
@@ -54,7 +53,20 @@ const EnhancedDashboard = () => {
     avgDiscovery3Duration: 35,
     avgClosing1Duration: 52,
     avgClosing2Duration: 48,
-    avgClosing3Duration: 45
+    avgClosing3Duration: 45,
+    proposalsCreated: 24,
+    proposalsPitched: 18
+  };
+
+  // Filter data based on selected month
+  const getFilteredData = () => {
+    if (selectedMonth === 'all') return trendData;
+    return trendData.filter(data => data.month.toLowerCase() === selectedMonth);
+  };
+
+  // Get months that have data
+  const getAvailableMonths = () => {
+    return trendData.map(data => data.month);
   };
 
   const MetricCard = ({ title, value, unit = '', icon: Icon, trend, className = '' }: any) => (
@@ -85,7 +97,7 @@ const EnhancedDashboard = () => {
     { id: 'leadsColdOutreach', label: 'Cold Outreach Leads', color: '#ff0000' }
   ];
 
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+  const availableMonths = getAvailableMonths();
 
   return (
     <div className="space-y-6">
@@ -127,7 +139,7 @@ const EnhancedDashboard = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Months</SelectItem>
-            {months.map((month) => (
+            {availableMonths.map((month) => (
               <SelectItem key={month} value={month.toLowerCase()}>{month}</SelectItem>
             ))}
           </SelectContent>
@@ -135,7 +147,7 @@ const EnhancedDashboard = () => {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <MetricCard
           title="Total Calls"
           value={metrics.totalCalls}
@@ -160,6 +172,22 @@ const EnhancedDashboard = () => {
           value={`$${(metrics.totalCashCollected / 1000).toFixed(0)}K`}
           icon={DollarSign}
           trend={8.5}
+        />
+        <MetricCard
+          title="Proposals Created"
+          value={metrics.proposalsCreated}
+          icon={FileText}
+          trend={10.2}
+        />
+      </div>
+
+      {/* Additional Key Metrics */}
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1">
+        <MetricCard
+          title="Proposals Pitched"
+          value={metrics.proposalsPitched}
+          icon={FileText}
+          trend={7.8}
         />
       </div>
 
@@ -279,7 +307,7 @@ const EnhancedDashboard = () => {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={trendData}>
+            <LineChart data={getFilteredData()}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />

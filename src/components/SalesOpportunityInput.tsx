@@ -312,6 +312,9 @@ const SalesOpportunityInput = () => {
                     <Badge variant={opportunity.opportunityStatus === 'won' ? 'default' : opportunity.opportunityStatus === 'lost' ? 'destructive' : 'secondary'}>
                       {opportunity.opportunityStatus}
                     </Badge>
+                    <Badge variant={opportunity.proposalStatus === 'pitched' ? 'default' : opportunity.proposalStatus === 'created' ? 'secondary' : 'outline'}>
+                      Proposal: {opportunity.proposalStatus}
+                    </Badge>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -406,102 +409,8 @@ const SalesOpportunityInput = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Discovery Calls */}
-                <div>
-                  <h4 className="font-semibold mb-3">Discovery Calls</h4>
-                  <div className="space-y-3">
-                    {[1, 2, 3].map((num) => (
-                      <div key={num} className="grid grid-cols-4 gap-2 items-center">
-                        <span className="text-sm font-medium">Call {num}:</span>
-                        <DatePicker
-                          date={opportunity[`discovery${num}Date` as keyof SalesOpportunity] as Date}
-                          onSelect={(date) => {
-                            setOpportunities(opportunities.map(opp => 
-                              opp.id === opportunity.id 
-                                ? { ...opp, [`discovery${num}Date`]: date }
-                                : opp
-                            ));
-                          }}
-                          placeholder={`Date ${num}`}
-                        />
-                        <Input
-                          type="number"
-                          placeholder="Duration (min)"
-                          value={opportunity[`discovery${num}Duration` as keyof SalesOpportunity] as number || ''}
-                          onChange={(e) => {
-                            setOpportunities(opportunities.map(opp => 
-                              opp.id === opportunity.id 
-                                ? { ...opp, [`discovery${num}Duration`]: parseInt(e.target.value) || 0 }
-                                : opp
-                            ));
-                          }}
-                        />
-                        <Input
-                          placeholder="Call link"
-                          value={opportunity[`discovery${num}Link` as keyof SalesOpportunity] as string || ''}
-                          onChange={(e) => {
-                            setOpportunities(opportunities.map(opp => 
-                              opp.id === opportunity.id 
-                                ? { ...opp, [`discovery${num}Link`]: e.target.value }
-                                : opp
-                            ));
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Closing Calls */}
-                <div>
-                  <h4 className="font-semibold mb-3">Closing Calls</h4>
-                  <div className="space-y-3">
-                    {[1, 2, 3].map((num) => (
-                      <div key={num} className="grid grid-cols-4 gap-2 items-center">
-                        <span className="text-sm font-medium">Call {num}:</span>
-                        <DatePicker
-                          date={opportunity[`closing${num}Date` as keyof SalesOpportunity] as Date}
-                          onSelect={(date) => {
-                            setOpportunities(opportunities.map(opp => 
-                              opp.id === opportunity.id 
-                                ? { ...opp, [`closing${num}Date`]: date }
-                                : opp
-                            ));
-                          }}
-                          placeholder={`Date ${num}`}
-                        />
-                        <Input
-                          type="number"
-                          placeholder="Duration (min)"
-                          value={opportunity[`closing${num}Duration` as keyof SalesOpportunity] as number || ''}
-                          onChange={(e) => {
-                            setOpportunities(opportunities.map(opp => 
-                              opp.id === opportunity.id 
-                                ? { ...opp, [`closing${num}Duration`]: parseInt(e.target.value) || 0 }
-                                : opp
-                            ));
-                          }}
-                        />
-                        <Input
-                          placeholder="Call link"
-                          value={opportunity[`closing${num}Link` as keyof SalesOpportunity] as string || ''}
-                          onChange={(e) => {
-                            setOpportunities(opportunities.map(opp => 
-                              opp.id === opportunity.id 
-                                ? { ...opp, [`closing${num}Link`]: e.target.value }
-                                : opp
-                            ));
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+              {/* Main Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
                 <div>
                   <Label>Salesperson</Label>
                   <Select
@@ -547,6 +456,53 @@ const SalesOpportunityInput = () => {
                   </Select>
                 </div>
                 <div>
+                  <Label>Opportunity Status</Label>
+                  <Select
+                    value={opportunity.opportunityStatus}
+                    onValueChange={(value: 'active' | 'won' | 'lost') => {
+                      setOpportunities(opportunities.map(opp => 
+                        opp.id === opportunity.id 
+                          ? { ...opp, opportunityStatus: value }
+                          : opp
+                      ));
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="won">Won</SelectItem>
+                      <SelectItem value="lost">Lost</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Proposal Status</Label>
+                  <Select
+                    value={opportunity.proposalStatus}
+                    onValueChange={(value: 'not-created' | 'created' | 'pitched') => {
+                      setOpportunities(opportunities.map(opp => 
+                        opp.id === opportunity.id 
+                          ? { ...opp, proposalStatus: value }
+                          : opp
+                      ));
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="not-created">Not Created</SelectItem>
+                      <SelectItem value="created">Created</SelectItem>
+                      <SelectItem value="pitched">Pitched</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
                   <Label>Revenue ($)</Label>
                   <Input
                     type="number"
@@ -575,6 +531,108 @@ const SalesOpportunityInput = () => {
                     }}
                     placeholder="0"
                   />
+                </div>
+              </div>
+
+              {/* Call Details - Compact Version */}
+              <div className="space-y-4">
+                <h4 className="font-semibold text-sm">Call Details</h4>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {/* Discovery Calls */}
+                  <div>
+                    <h5 className="text-xs font-medium mb-2">Discovery Calls</h5>
+                    <div className="space-y-2">
+                      {[1, 2, 3].map((num) => (
+                        <div key={num} className="grid grid-cols-5 gap-1 items-center text-xs">
+                          <span className="text-xs">D{num}:</span>
+                          <DatePicker
+                            date={opportunity[`discovery${num}Date` as keyof SalesOpportunity] as Date}
+                            onSelect={(date) => {
+                              setOpportunities(opportunities.map(opp => 
+                                opp.id === opportunity.id 
+                                  ? { ...opp, [`discovery${num}Date`]: date }
+                                  : opp
+                              ));
+                            }}
+                            placeholder={`Date`}
+                          />
+                          <Input
+                            type="number"
+                            placeholder="min"
+                            className="text-xs h-8"
+                            value={opportunity[`discovery${num}Duration` as keyof SalesOpportunity] as number || ''}
+                            onChange={(e) => {
+                              setOpportunities(opportunities.map(opp => 
+                                opp.id === opportunity.id 
+                                  ? { ...opp, [`discovery${num}Duration`]: parseInt(e.target.value) || 0 }
+                                  : opp
+                              ));
+                            }}
+                          />
+                          <Input
+                            placeholder="Link"
+                            className="text-xs h-8 col-span-2"
+                            value={opportunity[`discovery${num}Link` as keyof SalesOpportunity] as string || ''}
+                            onChange={(e) => {
+                              setOpportunities(opportunities.map(opp => 
+                                opp.id === opportunity.id 
+                                  ? { ...opp, [`discovery${num}Link`]: e.target.value }
+                                  : opp
+                              ));
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Closing Calls */}
+                  <div>
+                    <h5 className="text-xs font-medium mb-2">Closing Calls</h5>
+                    <div className="space-y-2">
+                      {[1, 2, 3].map((num) => (
+                        <div key={num} className="grid grid-cols-5 gap-1 items-center text-xs">
+                          <span className="text-xs">C{num}:</span>
+                          <DatePicker
+                            date={opportunity[`closing${num}Date` as keyof SalesOpportunity] as Date}
+                            onSelect={(date) => {
+                              setOpportunities(opportunities.map(opp => 
+                                opp.id === opportunity.id 
+                                  ? { ...opp, [`closing${num}Date`]: date }
+                                  : opp
+                              ));
+                            }}
+                            placeholder={`Date`}
+                          />
+                          <Input
+                            type="number"
+                            placeholder="min"
+                            className="text-xs h-8"
+                            value={opportunity[`closing${num}Duration` as keyof SalesOpportunity] as number || ''}
+                            onChange={(e) => {
+                              setOpportunities(opportunities.map(opp => 
+                                opp.id === opportunity.id 
+                                  ? { ...opp, [`closing${num}Duration`]: parseInt(e.target.value) || 0 }
+                                  : opp
+                              ));
+                            }}
+                          />
+                          <Input
+                            placeholder="Link"
+                            className="text-xs h-8 col-span-2"
+                            value={opportunity[`closing${num}Link` as keyof SalesOpportunity] as string || ''}
+                            onChange={(e) => {
+                              setOpportunities(opportunities.map(opp => 
+                                opp.id === opportunity.id 
+                                  ? { ...opp, [`closing${num}Link`]: e.target.value }
+                                  : opp
+                              ));
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
