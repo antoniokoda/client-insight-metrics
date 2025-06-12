@@ -6,57 +6,54 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { TrendingUp, Users, Phone, DollarSign, Target, Clock, BarChart3, FileText } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import { useSalesData } from '@/contexts/SalesDataContext';
 
 const EnhancedDashboard = () => {
+  const { opportunities, salespersons, getMetrics, getTrendData } = useSalesData();
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>('all');
   const [selectedLeadSource, setSelectedLeadSource] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>(['cashCollected', 'revenue', 'totalCalls']);
 
-  // Mock data - in real app this would come from API
-  const trendData = [
-    { month: 'Jan', cashCollected: 45000, revenue: 60000, totalCalls: 120, leadsWebsite: 25, leadsReferral: 15, leadsColdOutreach: 10 },
-    { month: 'Feb', cashCollected: 52000, revenue: 70000, totalCalls: 135, leadsWebsite: 30, leadsReferral: 18, leadsColdOutreach: 12 },
-    { month: 'Mar', cashCollected: 48000, revenue: 65000, totalCalls: 128, leadsWebsite: 28, leadsReferral: 16, leadsColdOutreach: 11 },
-    { month: 'Apr', cashCollected: 55000, revenue: 75000, totalCalls: 142, leadsWebsite: 32, leadsReferral: 20, leadsColdOutreach: 15 },
-    { month: 'May', cashCollected: 61000, revenue: 82000, totalCalls: 155, leadsWebsite: 35, leadsReferral: 22, leadsColdOutreach: 18 },
-    { month: 'Jun', cashCollected: 58000, revenue: 78000, totalCalls: 148, leadsWebsite: 33, leadsReferral: 21, leadsColdOutreach: 16 }
-  ];
+  // Get real data from context
+  const trendData = getTrendData();
+  const metrics = getMetrics();
 
-  const salespersonData = [
-    { name: 'John Smith', totalCalls: 85, revenue: 45000, cashCollected: 32000, closingRate: 18.2 },
-    { name: 'Sarah Johnson', totalCalls: 92, revenue: 52000, cashCollected: 38000, closingRate: 21.7 },
-    { name: 'Mike Davis', totalCalls: 78, revenue: 38000, cashCollected: 28000, closingRate: 15.4 }
-  ];
+  // Calculate salesperson performance from real data
+  const salespersonData = salespersons.map(person => {
+    const personOpps = opportunities.filter(opp => opp.salesperson === person.name);
+    const totalCalls = personOpps.reduce((sum, opp) => {
+      let callCount = 0;
+      if (opp.discovery1Date) callCount++;
+      if (opp.discovery2Date) callCount++;
+      if (opp.discovery3Date) callCount++;
+      if (opp.closing1Date) callCount++;
+      if (opp.closing2Date) callCount++;
+      if (opp.closing3Date) callCount++;
+      return sum + callCount;
+    }, 0);
+    
+    const revenue = personOpps.reduce((sum, opp) => sum + opp.revenue, 0);
+    const cashCollected = personOpps.reduce((sum, opp) => sum + opp.cashCollected, 0);
+    const wonOpps = personOpps.filter(opp => opp.opportunityStatus === 'won').length;
+    const totalOpps = personOpps.length;
+    const closingRate = totalOpps > 0 ? (wonOpps / totalOpps) * 100 : 0;
 
+    return {
+      name: person.name,
+      totalCalls,
+      revenue,
+      cashCollected,
+      closingRate: parseFloat(closingRate.toFixed(1))
+    };
+  });
+
+  // Calculate lead source distribution from real data
   const leadSourceData = [
-    { name: 'Website', value: 45, color: '#8884d8' },
-    { name: 'Referral', value: 30, color: '#82ca9d' },
-    { name: 'Cold Outreach', value: 25, color: '#ffc658' }
-  ];
-
-  const metrics = {
-    totalCalls: 255,
-    overallShowUpRate: 87.3,
-    totalRevenue: 195000,
-    totalCashCollected: 145000,
-    avgDiscoveryDuration: 38.5,
-    avgClosingDuration: 48.3,
-    discovery1Calls: 45,
-    discovery2Calls: 38,
-    discovery3Calls: 32,
-    closing1Calls: 28,
-    closing2Calls: 22,
-    closing3Calls: 18,
-    avgDiscovery1Duration: 42,
-    avgDiscovery2Duration: 38,
-    avgDiscovery3Duration: 35,
-    avgClosing1Duration: 52,
-    avgClosing2Duration: 48,
-    avgClosing3Duration: 45,
-    proposalsCreated: 24,
-    proposalsPitched: 18
-  };
+    { name: 'Website', value: opportunities.filter(opp => opp.leadSource === 'Website').length, color: '#8884d8' },
+    { name: 'Referral', value: opportunities.filter(opp => opp.leadSource === 'Referral').length, color: '#82ca9d' },
+    { name: 'Cold Outreach', value: opportunities.filter(opp => opp.leadSource === 'Cold Outreach').length, color: '#ffc658' }
+  ].filter(item => item.value > 0);
 
   // Filter data based on selected month
   const getFilteredData = () => {
@@ -129,9 +126,9 @@ const EnhancedDashboard = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Salespersons</SelectItem>
-            <SelectItem value="john">John Smith</SelectItem>
-            <SelectItem value="sarah">Sarah Johnson</SelectItem>
-            <SelectItem value="mike">Mike Davis</SelectItem>
+            {salespersons.map((person) => (
+              <SelectItem key={person.id} value={person.name.toLowerCase().replace(' ', '')}>{person.name}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
 

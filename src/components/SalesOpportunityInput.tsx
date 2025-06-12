@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,9 +10,11 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { CalendarIcon, Plus, Edit, Save, X, FileText, Users, Trash2, Link } from 'lucide-react';
+import { CalendarIcon, Plus, Edit, Save, X, FileText, Users, Trash2, Link, Upload, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useSalesData } from '@/contexts/SalesDataContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface Contact {
   id: number;
@@ -29,90 +32,24 @@ interface Note {
   timestamp: Date;
 }
 
-interface SalesOpportunity {
-  id: number;
-  name: string;
-  salesperson: string;
-  leadSource: string;
-  contacts: Contact[];
-  discovery1Date?: Date;
-  discovery2Date?: Date;
-  discovery3Date?: Date;
-  closing1Date?: Date;
-  closing2Date?: Date;
-  closing3Date?: Date;
-  discovery1Duration?: number;
-  discovery2Duration?: number;
-  discovery3Duration?: number;
-  closing1Duration?: number;
-  closing2Duration?: number;
-  closing3Duration?: number;
-  discovery1Link?: string;
-  discovery2Link?: string;
-  discovery3Link?: string;
-  closing1Link?: string;
-  closing2Link?: string;
-  closing3Link?: string;
-  proposalStatus: 'not-created' | 'created' | 'pitched';
-  opportunityStatus: 'active' | 'won' | 'lost';
-  revenue: number;
-  cashCollected: number;
-  notes: Note[];
-  files: string[];
-}
-
-interface Salesperson {
-  id: number;
-  name: string;
-}
-
-interface LeadSource {
-  id: number;
-  name: string;
-}
-
 const SalesOpportunityInput = () => {
-  const [opportunities, setOpportunities] = useState<SalesOpportunity[]>([
-    {
-      id: 1,
-      name: 'ABC Corporation Deal',
-      salesperson: 'John Smith',
-      leadSource: 'Website',
-      contacts: [
-        { id: 1, name: 'Jane Doe', position: 'CEO', email: 'jane@abc.com', phone: '+1234567890', linkedin: 'linkedin.com/in/janedoe' }
-      ],
-      discovery1Date: new Date('2024-05-15'),
-      discovery2Date: new Date('2024-05-20'),
-      closing1Date: new Date('2024-05-25'),
-      discovery1Duration: 45,
-      discovery2Duration: 38,
-      closing1Duration: 52,
-      proposalStatus: 'pitched',
-      opportunityStatus: 'active',
-      revenue: 15000,
-      cashCollected: 5000,
-      notes: [
-        { id: 1, content: 'Initial meeting went well', author: 'John Smith', timestamp: new Date('2024-05-15') }
-      ],
-      files: []
-    }
-  ]);
-
-  const [salespersons, setSalespersons] = useState<Salesperson[]>([
-    { id: 1, name: 'John Smith' },
-    { id: 2, name: 'Sarah Johnson' }
-  ]);
-
-  const [leadSources, setLeadSources] = useState<LeadSource[]>([
-    { id: 1, name: 'Website' },
-    { id: 2, name: 'Referral' },
-    { id: 3, name: 'Cold Outreach' }
-  ]);
-
+  const { 
+    opportunities, 
+    setOpportunities, 
+    salespersons, 
+    setSalespersons, 
+    leadSources, 
+    setLeadSources 
+  } = useSalesData();
+  
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState<number | null>(null);
   const [showContactsDialog, setShowContactsDialog] = useState(false);
   const [showNotesDialog, setShowNotesDialog] = useState(false);
+  const [showFilesDialog, setShowFilesDialog] = useState(false);
   const [newNote, setNewNote] = useState('');
 
   const DatePicker = ({ date, onSelect, placeholder }: { date?: Date; onSelect: (date: Date | undefined) => void; placeholder: string }) => {
@@ -179,7 +116,7 @@ const SalesOpportunityInput = () => {
     const note: Note = {
       id: Date.now(),
       content: newNote,
-      author: 'Current User', // This would be the logged-in user
+      author: 'Current User',
       timestamp: new Date()
     };
     
@@ -194,6 +131,50 @@ const SalesOpportunityInput = () => {
 
   const deleteOpportunity = (id: number) => {
     setOpportunities(opportunities.filter(opp => opp.id !== id));
+    toast({
+      title: "Opportunity deleted",
+      description: "The sales opportunity has been successfully deleted.",
+    });
+  };
+
+  const handleFileUpload = (opportunityId: number, files: FileList | null) => {
+    if (!files) return;
+    
+    const newFiles = Array.from(files);
+    setOpportunities(opportunities.map(opp => 
+      opp.id === opportunityId 
+        ? { ...opp, files: [...opp.files, ...newFiles] }
+        : opp
+    ));
+    
+    toast({
+      title: "Files uploaded",
+      description: `${newFiles.length} file(s) have been uploaded successfully.`,
+    });
+  };
+
+  const handleFileDownload = (file: File) => {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "File downloaded",
+      description: `${file.name} has been downloaded.`,
+    });
+  };
+
+  const removeFile = (opportunityId: number, fileIndex: number) => {
+    setOpportunities(opportunities.map(opp => 
+      opp.id === opportunityId 
+        ? { ...opp, files: opp.files.filter((_, index) => index !== fileIndex) }
+        : opp
+    ));
   };
 
   return (
@@ -413,6 +394,76 @@ const SalesOpportunityInput = () => {
                       </div>
                     </DialogContent>
                   </Dialog>
+
+                  <Dialog open={showFilesDialog && selectedOpportunity === opportunity.id} onOpenChange={(open) => {
+                    setShowFilesDialog(open);
+                    if (open) setSelectedOpportunity(opportunity.id);
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="sm" className="hover:bg-green-50 rounded-full">
+                        <Upload className="h-4 w-4 text-green-500" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="rounded-xl p-6">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-gray-900">Files for {opportunity.name}</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            className="hidden"
+                            onChange={(e) => handleFileUpload(opportunity.id, e.target.files)}
+                          />
+                          <Button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-2"
+                          >
+                            <Upload className="h-4 w-4" />
+                            Upload Files
+                          </Button>
+                          <p className="text-sm text-gray-500 mt-2">Click to upload or drag and drop files</p>
+                        </div>
+                        
+                        {opportunity.files.length > 0 && (
+                          <div className="space-y-2 max-h-96 overflow-y-auto">
+                            <h4 className="font-semibold">Uploaded Files:</h4>
+                            {opportunity.files.map((file, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
+                                <div className="flex items-center gap-2">
+                                  <FileText className="h-4 w-4 text-gray-500" />
+                                  <span className="text-sm">{file.name}</span>
+                                  <span className="text-xs text-gray-400">
+                                    ({(file.size / 1024).toFixed(1)} KB)
+                                  </span>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleFileDownload(file)}
+                                    className="hover:bg-blue-50"
+                                  >
+                                    <Download className="h-4 w-4 text-blue-500" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => removeFile(opportunity.id, index)}
+                                    className="hover:bg-red-50"
+                                  >
+                                    <X className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   
                   <Button
                     variant="ghost"
@@ -565,7 +616,7 @@ const SalesOpportunityInput = () => {
                         <div key={num} className="grid grid-cols-5 gap-2 items-center text-sm">
                           <span className="font-semibold text-blue-700">D{num}:</span>
                           <DatePicker
-                            date={opportunity[`discovery${num}Date` as keyof SalesOpportunity] as Date}
+                            date={opportunity[`discovery${num}Date` as keyof typeof opportunity] as Date}
                             onSelect={(date) => {
                               setOpportunities(opportunities.map(opp => 
                                 opp.id === opportunity.id 
@@ -579,7 +630,7 @@ const SalesOpportunityInput = () => {
                             type="number"
                             placeholder="min"
                             className="text-sm h-9 rounded-lg"
-                            value={opportunity[`discovery${num}Duration` as keyof SalesOpportunity] as number || ''}
+                            value={opportunity[`discovery${num}Duration` as keyof typeof opportunity] as number || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
                                 opp.id === opportunity.id 
@@ -591,7 +642,7 @@ const SalesOpportunityInput = () => {
                           <Input
                             placeholder="Link"
                             className="text-sm h-9 col-span-2 rounded-lg"
-                            value={opportunity[`discovery${num}Link` as keyof SalesOpportunity] as string || ''}
+                            value={opportunity[`discovery${num}Link` as keyof typeof opportunity] as string || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
                                 opp.id === opportunity.id 
@@ -613,7 +664,7 @@ const SalesOpportunityInput = () => {
                         <div key={num} className="grid grid-cols-5 gap-2 items-center text-sm">
                           <span className="font-semibold text-green-700">C{num}:</span>
                           <DatePicker
-                            date={opportunity[`closing${num}Date` as keyof SalesOpportunity] as Date}
+                            date={opportunity[`closing${num}Date` as keyof typeof opportunity] as Date}
                             onSelect={(date) => {
                               setOpportunities(opportunities.map(opp => 
                                 opp.id === opportunity.id 
@@ -627,7 +678,7 @@ const SalesOpportunityInput = () => {
                             type="number"
                             placeholder="min"
                             className="text-sm h-9 rounded-lg"
-                            value={opportunity[`closing${num}Duration` as keyof SalesOpportunity] as number || ''}
+                            value={opportunity[`closing${num}Duration` as keyof typeof opportunity] as number || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
                                 opp.id === opportunity.id 
@@ -639,7 +690,7 @@ const SalesOpportunityInput = () => {
                           <Input
                             placeholder="Link"
                             className="text-sm h-9 col-span-2 rounded-lg"
-                            value={opportunity[`closing${num}Link` as keyof SalesOpportunity] as string || ''}
+                            value={opportunity[`closing${num}Link` as keyof typeof opportunity] as string || ''}
                             onChange={(e) => {
                               setOpportunities(opportunities.map(opp => 
                                 opp.id === opportunity.id 
